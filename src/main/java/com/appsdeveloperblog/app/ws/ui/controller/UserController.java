@@ -2,9 +2,12 @@ package com.appsdeveloperblog.app.ws.ui.controller;
 
 import com.appsdeveloperblog.app.ws.exception.hadler.RecordExistsRuntimeException;
 import com.appsdeveloperblog.app.ws.service.UserService;
-import com.appsdeveloperblog.app.ws.shared.Utils;
+import com.appsdeveloperblog.app.ws.service.UserServiceException;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDto;
 import com.appsdeveloperblog.app.ws.ui.model.request.UserDetailsRequestModel;
+import com.appsdeveloperblog.app.ws.ui.model.response.ErrorMessages;
+import com.appsdeveloperblog.app.ws.ui.model.response.OperationStatusModel;
+import com.appsdeveloperblog.app.ws.ui.model.response.RequestOperationStatus;
 import com.appsdeveloperblog.app.ws.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +19,24 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping
-    public String getUsers () {
-        return "get user was called";
+    @GetMapping(path = "/{id}")
+    public UserRest getUsers(@PathVariable String id) {
+        UserRest returnValue = new UserRest();
+
+        UserDto userDto = userService.getUserByUserId(id);
+        BeanUtils.copyProperties(userDto, returnValue);
+
+        return returnValue;
     }
 
     @PostMapping
-    @ExceptionHandler({ RecordExistsRuntimeException.class })
-    public UserRest createUsers (@RequestBody UserDetailsRequestModel userDetails){
+    @ExceptionHandler({RecordExistsRuntimeException.class})
+    public UserRest createUsers(@RequestBody UserDetailsRequestModel userDetails) {
 
         UserRest returnValue = new UserRest();
+
+        if (userDetails.getFirstName().isEmpty())
+            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userDetails, userDto);
@@ -36,13 +47,32 @@ public class UserController {
         return returnValue;
     }
 
-    @PutMapping
-    public String updateUsers () {
-     return  "update user was called";
+    @PutMapping(path = "/{id}")
+    public UserRest updateUsers(@PathVariable String id, @RequestBody UserDetailsRequestModel userDetails) {
+
+        UserRest returnValue = new UserRest();
+
+        if (userDetails.getFirstName().isEmpty())
+            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(userDetails, userDto);
+
+        UserDto updateUser = userService.updateUser(id, userDto);
+        BeanUtils.copyProperties(updateUser, returnValue);
+
+        return returnValue;
     }
 
-    @DeleteMapping
-    public String deleteUsers () {
-        return  "delete user was called";
+    @DeleteMapping(path = "/{id}")
+    public OperationStatusModel deleteUsers(@PathVariable String id) {
+
+        OperationStatusModel returnValue = new OperationStatusModel();
+
+        returnValue.setOperationName(RequestOperationName.DELETE.name());
+        userService.deleteUser(id);
+        returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+
+        return returnValue;
     }
 }
