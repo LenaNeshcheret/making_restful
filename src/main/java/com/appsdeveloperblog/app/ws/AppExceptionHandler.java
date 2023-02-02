@@ -16,16 +16,17 @@ import java.util.Date;
 public class AppExceptionHandler {
 
     @ExceptionHandler(value = {UserServiceException.class})
-    public ResponseEntity<Object> handleUserServiceException(UserServiceException ex, WebRequest request){
+    public ResponseEntity<Object> handleUserServiceException(UserServiceException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getMessage());
 
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {UsernameNotFoundException.class})
-    public ResponseEntity<Object> handleUserNotFoundException(UsernameNotFoundException ex, WebRequest request){
+    public ResponseEntity<Object> handleUserNotFoundException(UsernameNotFoundException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getMessage());
 
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
+
 }
