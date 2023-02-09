@@ -1,0 +1,12 @@
+package com.appsdeveloperblog.app.ws.service;
+
+import com.appsdeveloperblog.app.ws.shared.dto.AddressDTO;
+
+import java.util.List;
+
+public interface AddressesService {
+    List<AddressDTO> getAddresses(String id);
+
+    AddressDTO getAddress(String addressesId);
+
+}

@@ -1,14 +1,16 @@
 package com.appsdeveloperblog.app.ws.shared.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
-@Data
+@Getter@Setter
 public class UserDto implements Serializable {
 
     private static final long serialVersionId = 1L ;
-    private long Id;
+    private long id;
     private String userId;
     private String firstName;
     private String lastName;
@@ -17,6 +19,7 @@ public class UserDto implements Serializable {
     private String encryptedPassword;
     private  String emailVerificationToken;
     private  Boolean emailVerificationStatus = false;
+    private List<AddressDTO> addresses;
 
 
 }
