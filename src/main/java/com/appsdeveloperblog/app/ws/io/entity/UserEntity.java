@@ -1,16 +1,14 @@
 package com.appsdeveloperblog.app.ws.io.entity;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity (name = "users")
-@Data
+@Getter@Setter
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,5 +34,8 @@ public class UserEntity implements Serializable {
 
     @Column(nullable = false)
     private  Boolean emailVerificationStatus = false;
+
+    @OneToMany(mappedBy = "userDetails", cascade = {CascadeType.ALL})
+    private List<AddressEntity> addresses;
 
 }
